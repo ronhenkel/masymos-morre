@@ -10,7 +10,7 @@
 	<name>server.plugin</name>
 	<url>http://maven.apache.org</url>
 	<build>
-		<sourceDirectory>src/main/java</sourceDirectory>
+		<sourceDirectory>src</sourceDirectory>
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
