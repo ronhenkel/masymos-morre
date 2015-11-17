@@ -15,7 +15,9 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang3.StringUtils;
+import org.kohsuke.MetaInfServices;
 import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.server.plugins.ServerPlugin;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -42,9 +44,9 @@ import de.unirostock.sems.masymos.query.types.SBMLModelQuery;
 import de.unirostock.sems.masymos.query.types.SedmlQuery;
 import de.unirostock.sems.masymos.util.ResultSetUtil;
 
+@MetaInfServices( ServerPlugin.class )
 @Path("/query")
-
-public class Query 
+public class Query
 {
 
     @POST

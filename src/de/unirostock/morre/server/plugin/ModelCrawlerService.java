@@ -14,7 +14,9 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang3.StringUtils;
+import org.kohsuke.MetaInfServices;
 import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.server.plugins.ServerPlugin;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
@@ -25,9 +27,9 @@ import de.unirostock.sems.masymos.database.ModelInserter;
 import de.unirostock.sems.masymos.database.ModelLookup;
 import de.unirostock.sems.masymos.util.ModelDataHolder;
 
+@MetaInfServices( ServerPlugin.class )
 @Path("/service")
-
-public class ModelCrawlerService 
+public class ModelCrawlerService
 {
 
     @POST

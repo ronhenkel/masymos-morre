@@ -6,6 +6,8 @@ import java.util.List;
 
 
 
+
+import org.kohsuke.MetaInfServices;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.server.plugins.Description;
 import org.neo4j.server.plugins.Name;
@@ -22,6 +24,7 @@ import de.unirostock.sems.masymos.query.types.PublicationQuery;
 import de.unirostock.sems.masymos.query.types.SBMLModelQuery;
 
 //@Path("/diagnose")
+@MetaInfServices( ServerPlugin.class )
 @Description( "An extension to the Neo4j Server to test if model API is alive" )
 public class Diagnose extends ServerPlugin
 {
