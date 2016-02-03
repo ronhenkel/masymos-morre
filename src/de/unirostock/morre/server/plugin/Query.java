@@ -23,8 +23,12 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import de.unirostock.morre.server.util.ManagerUtil;
+import de.unirostock.morre.server.util.RankAggregationUtil;
+import de.unirostock.sems.masymos.configuration.RankAggregationType;
+import de.unirostock.sems.masymos.configuration.RankAggregationType.Types;
 import de.unirostock.sems.masymos.query.IQueryInterface;
 import de.unirostock.sems.masymos.query.QueryAdapter;
+import de.unirostock.sems.masymos.query.aggregation.RankAggregation;
 import de.unirostock.sems.masymos.query.enumerator.AnnotationFieldEnumerator;
 import de.unirostock.sems.masymos.query.enumerator.CellMLModelFieldEnumerator;
 import de.unirostock.sems.masymos.query.enumerator.PersonFieldEnumerator;
@@ -1073,6 +1077,102 @@ public class Query
 		ManagerUtil.initManager(graphDbSevice); 
 		//String s = "Retrieve models matching the provided keywords. The query is expanded to all indices.";
 		String[] s = {"keyword"};
+		Gson gson = new Gson();
+		return gson.toJson(s);
+    }
+	
+    @POST
+    @Produces( MediaType.APPLICATION_JSON )
+    @Consumes( MediaType.APPLICATION_JSON ) 
+    @Path( "/aggregated_model_query" )
+    public String aggregatedModelQuery( 	@Context GraphDatabaseService graphDbSevice,
+    										String jsonMap)
+    {
+    	ManagerUtil.initManager(graphDbSevice); 	
+    	
+    	Gson gson = new Gson();
+    	
+    	Map<String, String> parameterMap = new HashMap<String, String>();
+    	java.lang.reflect.Type typeOfT = new TypeToken<Map<String, String>>(){}.getType();
+    	parameterMap = gson.fromJson(jsonMap, typeOfT);
+    	
+    	if (parameterMap==null){
+    		String[] s = {"Exception","no parameters provided!"};
+    		return gson.toJson(s);
+    	} 		
+
+    	String keyword = parameterMap.get("keyword");
+    	if (StringUtils.isEmpty(keyword)){
+    		String[] s = {"Exception","no keywords provided!"};
+    		return gson.toJson(s);
+    	} 
+    	String topns = parameterMap.get("topn");
+    	Integer topn = Integer.MAX_VALUE;
+    	if (!StringUtils.isEmpty(topns) && StringUtils.isNumeric(topns)){
+    		topn = Integer.valueOf(topns);
+    	}   	
+    	String aggregationTypeString = parameterMap.get("aggregationType");
+    	RankAggregationType.Types aggregationType;
+    	if (StringUtils.isEmpty(aggregationTypeString)){
+    		aggregationType = Types.DEFAULT;  
+    	} else aggregationType = RankAggregationType.stringToRankAggregationType(aggregationTypeString);
+    	
+    	
+    	List<ModelResultSet> results = null;
+    	List<ModelResultSet> initialAggregateRanker = null;
+    	
+       	CellMLModelQuery cq = new CellMLModelQuery();
+    	cq.addQueryClause(CellMLModelFieldEnumerator.NONE, keyword);
+    	SBMLModelQuery sq = new SBMLModelQuery();
+    	sq.addQueryClause(SBMLModelFieldEnumerator.NONE, keyword);
+    	PersonQuery persq = new PersonQuery();
+    	persq.addQueryClause(PersonFieldEnumerator.NONE, keyword);
+    	PublicationQuery pubq = new PublicationQuery();
+    	pubq.addQueryClause(PublicationFieldEnumerator.NONE, keyword);
+    	AnnotationQuery aq = new AnnotationQuery();
+    	aq.addQueryClause(AnnotationFieldEnumerator.NONE, keyword);
+    	
+    	List<IQueryInterface> qL = new LinkedList<IQueryInterface>();
+		qL.add(cq);
+		qL.add(sq);
+		qL.add(persq);
+		qL.add(pubq);
+		qL.add(aq);
+    	try {
+    		results = QueryAdapter.executeMultipleQueriesForModels(qL);
+    		    		
+    		initialAggregateRanker = ResultSetUtil.collateModelResultSetByModelId(results);
+    		List<List<ModelResultSet>> splitResults = RankAggregationUtil.splitModelResultSetByIndex(results);
+    		results = RankAggregation.aggregate(splitResults, initialAggregateRanker, aggregationType);
+		} catch (Exception e) {
+			String[] s = {"Exception",e.getMessage()};			
+			
+            return gson.toJson(s); 
+		}
+    	if ((results!=null) && !results.isEmpty()) {
+    		if (topn!=null){
+    			results = results.subList(0, Math.min(topn, results.size()-1));
+    		}
+
+    		return gson.toJson(results);
+    		
+    	} else {
+    		String[] s = {"#Results","0"};
+    		
+    		 return gson.toJson(s);
+
+    	}
+    }
+    
+	@GET
+    @Produces( MediaType.APPLICATION_JSON ) 
+	@Consumes(MediaType.TEXT_PLAIN) 
+    @Path( "/aggregated_model_query" )
+    public String aggregatedModelQuery(@Context GraphDatabaseService graphDbSevice)
+    {
+		ManagerUtil.initManager(graphDbSevice); 
+		//String s = "Retrieve models matching the provided keywords. The query is expanded to all indices. Results from different indices are aggregated according to the chosen aggregation";
+		String[] s = {"keyword","aggregationType:["+RankAggregationType.Types.values()+"]"};
 		Gson gson = new Gson();
 		return gson.toJson(s);
     }
