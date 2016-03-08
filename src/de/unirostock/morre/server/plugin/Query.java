@@ -23,7 +23,6 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import de.unirostock.morre.server.util.ManagerUtil;
-import de.unirostock.morre.server.util.RankAggregationUtil;
 import de.unirostock.sems.masymos.configuration.RankAggregationType;
 import de.unirostock.sems.masymos.configuration.RankAggregationType.Types;
 import de.unirostock.sems.masymos.query.IQueryInterface;
@@ -46,6 +45,7 @@ import de.unirostock.sems.masymos.query.types.PersonQuery;
 import de.unirostock.sems.masymos.query.types.PublicationQuery;
 import de.unirostock.sems.masymos.query.types.SBMLModelQuery;
 import de.unirostock.sems.masymos.query.types.SedmlQuery;
+import de.unirostock.sems.masymos.util.RankAggregationUtil;
 import de.unirostock.sems.masymos.util.ResultSetUtil;
 
 @MetaInfServices( ServerPlugin.class )
