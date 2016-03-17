@@ -1150,10 +1150,11 @@ public class Query
             return gson.toJson(s); 
 		}
     	if ((results!=null) && !results.isEmpty()) {
+    		/*
     		if (topn!=null){
     			results = results.subList(0, Math.min(topn, results.size()-1));
     		}
-
+*/
     		return gson.toJson(results);
     		
     	} else {
