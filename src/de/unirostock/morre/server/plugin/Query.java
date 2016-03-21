@@ -111,10 +111,8 @@ public class Query
             return gson.toJson(s); 
 		}
     	if ((results!=null) && !results.isEmpty()) {
-    		if (topn!=null){
-    			results = results.subList(0, Math.min(topn, results.size()-1));
-    		}
-
+ 
+    		results = results.subList(0, Math.min(topn, results.size()));
     		return gson.toJson(results);
     		
     	} else {
@@ -184,10 +182,8 @@ public class Query
             return gson.toJson(s); 
 		}
     	if ((results!=null) && !results.isEmpty()) {
-    		if (topn!=null){
-    			results = results.subList(0, Math.min(topn, results.size()-1));
-    		}
 
+    		results = results.subList(0, Math.min(topn, results.size()));
     		return gson.toJson(results);
     		
     	} else {
@@ -292,12 +288,8 @@ public class Query
     			return gson.toJson(s);
     		}
         	if ((results!=null) && !results.isEmpty()) {
-        		if (topn==null){
-        			return gson.toJson(results);
-        		} else {
-        			return gson.toJson(results.subList(0, Math.min(topn, results.size()-1)));
-        		}
-        		
+        		results = results.subList(0, Math.min(topn, results.size()));
+        		return gson.toJson(results);
         	} else {
         		String[] s = {"#Results","0"};
     			return gson.toJson(s);
@@ -373,10 +365,7 @@ public class Query
             return gson.toJson(s); 
 		}
     	if ((results!=null) && !results.isEmpty()) {
-    		if (topn!=null){
-    			results = results.subList(0, Math.min(topn, results.size()-1));
-    		}
-
+    		results = results.subList(0, Math.min(topn, results.size()));
     		return gson.toJson(results);
     		
     	} else {
@@ -482,12 +471,8 @@ public class Query
     			return gson.toJson(s);
     		}
         	if ((results!=null) && !results.isEmpty()) {
-        		if (topn==null){
-        			return gson.toJson(results);
-        		} else {
-        			return gson.toJson(results.subList(0, Math.min(topn, results.size()-1)));
-        		}
-        		
+        		results = results.subList(0, Math.min(topn, results.size()));
+        		return gson.toJson(results);
         	} else {
         		String[] s = {"#Results","0"};
     			return gson.toJson(s);
@@ -906,10 +891,7 @@ public class Query
             return gson.toJson(s); 
 		}
     	if ((results!=null) && !results.isEmpty()) {
-    		if (topn!=null){
-    			results = results.subList(0, Math.min(topn, results.size()-1));
-    		}
-
+    		results = results.subList(0, Math.min(topn, results.size()));
     		return gson.toJson(results);
     		
     	} else {
@@ -976,10 +958,7 @@ public class Query
             return gson.toJson(s); 
 		}
     	if ((results!=null) && !results.isEmpty()) {
-    		if (topn!=null){
-    			results = results.subList(0, Math.min(topn, results.size()-1));
-    		}
-
+    		results = results.subList(0, Math.min(topn, results.size()));
     		return gson.toJson(results);
     		
     	} else {
@@ -1051,14 +1030,8 @@ public class Query
     	}
     			
     	if ((results!=null) && !results.isEmpty()) {
-    		if (topn!=null){
-    			if (topn < (results.size())) {
-    				results = results.subList(0, topn);
-    			}
-    				
-    		}
-
-    		return gson.toJson(results);
+    		results = results.subList(0, Math.min(topn, results.size()));
+       		return gson.toJson(results);
     		
     	} else {
     		String[] s = {"#Results","0"};
@@ -1151,11 +1124,7 @@ public class Query
 		}
     	
     	if ((results!=null) && !results.isEmpty()) {
-    		/*
-    		if (topn!=null){
-    			results = results.subList(0, Math.min(topn, results.size()-1));
-    		}
-           */
+    		results = results.subList(0, Math.min(topn, results.size()));
     		return gson.toJson(results);
     		
     	}
