@@ -1089,7 +1089,8 @@ public class Query
     	if (StringUtils.isEmpty(aggregationTypeString)){
     		aggregationType = Types.DEFAULT;  
     	} else aggregationType = RankAggregationType.stringToRankAggregationType(aggregationTypeString);
-    	
+    	String rankersWeightsString = parameterMap.get("rankersWeights");
+    	int rankersWeights = Integer.parseInt(rankersWeightsString);
     	
     	List<ModelResultSet> results = null;
     	List<ModelResultSet> initialAggregateRanker = null;
@@ -1116,7 +1117,7 @@ public class Query
     		    		
     		initialAggregateRanker = ResultSetUtil.collateModelResultSetByModelId(results);
     		List<List<ModelResultSet>> splitResults = RankAggregationUtil.splitModelResultSetByIndex(results);
-    		results = RankAggregation.aggregate(splitResults, initialAggregateRanker, aggregationType);
+    		results = RankAggregation.aggregate(splitResults, initialAggregateRanker, aggregationType, rankersWeights);
 		} catch (Exception e) {
 			String[] s = {"Exception",e.getMessage()};			
 			
