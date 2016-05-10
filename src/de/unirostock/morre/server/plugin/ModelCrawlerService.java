@@ -16,6 +16,7 @@ import javax.ws.rs.core.MediaType;
 import org.apache.commons.lang3.StringUtils;
 import org.kohsuke.MetaInfServices;
 import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.server.plugins.Description;
 import org.neo4j.server.plugins.ServerPlugin;
 
 import com.google.gson.Gson;
@@ -28,16 +29,18 @@ import de.unirostock.sems.masymos.database.ModelLookup;
 import de.unirostock.sems.masymos.util.ModelDataHolder;
 
 @MetaInfServices( ServerPlugin.class )
-@Path("/service")
-public class ModelCrawlerService
+//@Path("/service")
+@Description( "An extension to the Neo4j Server to test if model API is alive" )
+public class ModelCrawlerService extends ServerPlugin
 {
 
+	
     @POST
     @Produces( MediaType.APPLICATION_JSON )
     @Consumes( MediaType.APPLICATION_JSON ) 
     @Path( "/get_model_history" )
     public String getModelHistory( 	@Context GraphDatabaseService graphDbSevice,
-    										String jsonMap)
+    										 String jsonMap)
     {
     	ManagerUtil.initManager(graphDbSevice); 	
     	
@@ -45,7 +48,13 @@ public class ModelCrawlerService
     	
     	Map<String, String> parameterMap = new HashMap<String, String>();
     	java.lang.reflect.Type typeOfT = new TypeToken<Map<String, String>>(){}.getType();
-    	parameterMap = gson.fromJson(jsonMap, typeOfT);
+
+    	try {
+    		parameterMap = gson.fromJson(jsonMap, typeOfT);
+		} catch (Exception e) {
+			String[] s = {"Exception",e.getMessage()};			
+            return gson.toJson(s); 
+		}
     	
     	if (parameterMap==null){
     		String[] s = {"Exception","no parameters provided!"};
@@ -71,7 +80,7 @@ public class ModelCrawlerService
    
 
     }
-    
+  
 	@GET
     @Produces( MediaType.APPLICATION_JSON ) 
 	@Consumes(MediaType.TEXT_PLAIN) 
@@ -99,7 +108,13 @@ public class ModelCrawlerService
     	
     	Map<String, String> parameterMap = new HashMap<String, String>();
     	java.lang.reflect.Type typeOfT = new TypeToken<Map<String, String>>(){}.getType();
-    	parameterMap = gson.fromJson(jsonMap, typeOfT);
+
+    	try {
+    		parameterMap = gson.fromJson(jsonMap, typeOfT);
+		} catch (Exception e) {
+			String[] s = {"Exception",e.getMessage()};			
+            return gson.toJson(s); 
+		}
     	
     	if (parameterMap==null){
     		String[] s = {"Exception","no parameters provided!"};
@@ -157,7 +172,13 @@ public class ModelCrawlerService
     	
     	Map<String, String> parameterMap = new HashMap<String, String>();
     	java.lang.reflect.Type typeOfT = new TypeToken<Map<String, String>>(){}.getType();
-    	parameterMap = gson.fromJson(jsonMap, typeOfT);
+
+    	try {
+    		parameterMap = gson.fromJson(jsonMap, typeOfT);
+		} catch (Exception e) {
+			String[] s = {"Exception",e.getMessage()};			
+            return gson.toJson(s); 
+		}
     	
     	if (parameterMap==null){
     		String[] s = {"Exception","no parameters provided!"};
@@ -214,7 +235,7 @@ public class ModelCrawlerService
     	try {
     		mdh = gson.fromJson(jsonMap, typeOfT);	
 		} catch (JsonSyntaxException e) {
-			String[] s = {"Exception","wrong parameters provided!"};
+			String[] s = {"Exception","wrong parameters provided!","Stacktrace", e.getMessage()};
     		return gson.toJson(s);
 		}
     	
@@ -265,7 +286,13 @@ public class ModelCrawlerService
     	
     	Map<String, String> parameterMap = new HashMap<String, String>();
     	java.lang.reflect.Type typeOfT = new TypeToken<Map<String, String>>(){}.getType();
-    	parameterMap = gson.fromJson(jsonMap, typeOfT);
+
+    	try {
+    		parameterMap = gson.fromJson(jsonMap, typeOfT);
+		} catch (Exception e) {
+			String[] s = {"Exception",e.getMessage()};			
+            return gson.toJson(s); 
+		}
     	
     	Boolean dropExistingIndex = false;
     	try {
@@ -302,5 +329,5 @@ public class ModelCrawlerService
 		Gson gson = new Gson();
 		return gson.toJson(s);
     }
-    
+  
 }
