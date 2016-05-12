@@ -15,9 +15,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang3.StringUtils;
-import org.kohsuke.MetaInfServices;
 import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.server.plugins.ServerPlugin;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -48,7 +46,7 @@ import de.unirostock.sems.masymos.query.types.SedmlQuery;
 import de.unirostock.sems.masymos.util.RankAggregationUtil;
 import de.unirostock.sems.masymos.util.ResultSetUtil;
 
-@MetaInfServices( ServerPlugin.class )
+//@MetaInfServices( ServerPlugin.class )
 @Path("/query")
 public class Query
 {
@@ -66,7 +64,13 @@ public class Query
     	
     	Map<String, String> parameterMap = new HashMap<String, String>();
     	java.lang.reflect.Type typeOfT = new TypeToken<Map<String, String>>(){}.getType();
-    	parameterMap = gson.fromJson(jsonMap, typeOfT);
+    	
+    	try {
+    		parameterMap = gson.fromJson(jsonMap, typeOfT);
+		} catch (Exception e) {
+			String[] s = {"Exception",e.getMessage()};			
+            return gson.toJson(s); 
+		}
     	
     	if (parameterMap==null){
     		String[] s = {"Exception","no parameters provided!"};
@@ -151,7 +155,13 @@ public class Query
     	
     	Map<String, String> parameterMap = new HashMap<String, String>();
     	java.lang.reflect.Type typeOfT = new TypeToken<Map<String, String>>(){}.getType();
-    	parameterMap = gson.fromJson(jsonMap, typeOfT);
+    	
+    	try {
+    		parameterMap = gson.fromJson(jsonMap, typeOfT);
+		} catch (Exception e) {
+			String[] s = {"Exception",e.getMessage()};			
+            return gson.toJson(s); 
+		}
     	
     	if (parameterMap==null){
     		String[] s = {"Exception","no parameters provided!"};
@@ -222,7 +232,13 @@ public class Query
     	
     	Map<String, Object> parameterMap = new HashMap<String, Object>();
     	java.lang.reflect.Type typeOfT = new TypeToken<Map<String, Object>>(){}.getType();
-    	parameterMap = gson.fromJson(jsonMap, typeOfT);
+
+    	try {
+    		parameterMap = gson.fromJson(jsonMap, typeOfT);
+		} catch (Exception e) {
+			String[] s = {"Exception",e.getMessage()};			
+            return gson.toJson(s); 
+		}
     	
     	if (parameterMap==null){
     		String[] s = {"Exception","no parameters provided!"};
@@ -334,7 +350,13 @@ public class Query
     	
     	Map<String, String> parameterMap = new HashMap<String, String>();
     	java.lang.reflect.Type typeOfT = new TypeToken<Map<String, String>>(){}.getType();
-    	parameterMap = gson.fromJson(jsonMap, typeOfT);
+    	
+    	try {
+    		parameterMap = gson.fromJson(jsonMap, typeOfT);
+		} catch (Exception e) {
+			String[] s = {"Exception",e.getMessage()};			
+            return gson.toJson(s); 
+		}
     		
     	if (parameterMap==null){
     		String[] s = {"Exception","no parameters provided!"};
@@ -405,7 +427,13 @@ public class Query
     	
     	Map<String, Object> parameterMap = new HashMap<String, Object>();
     	java.lang.reflect.Type typeOfT = new TypeToken<Map<String, Object>>(){}.getType();
-    	parameterMap = gson.fromJson(jsonMap, typeOfT);  
+
+    	try {
+    		parameterMap = gson.fromJson(jsonMap, typeOfT);
+		} catch (Exception e) {
+			String[] s = {"Exception",e.getMessage()};			
+            return gson.toJson(s); 
+		}
     	
     	if (parameterMap==null){
     		String[] s = {"Exception","no parameters provided!"};
@@ -516,7 +544,13 @@ public class Query
     	
     	Map<String, List<String>> parameterMap = new HashMap<String, List<String>>();
     	java.lang.reflect.Type typeOfT = new TypeToken<Map<String, List<String>>>(){}.getType();
-    	parameterMap = gson.fromJson(jsonMap, typeOfT); 
+    	
+    	try {
+    		parameterMap = gson.fromJson(jsonMap, typeOfT);
+		} catch (Exception e) {
+			String[] s = {"Exception",e.getMessage()};			
+            return gson.toJson(s); 
+		}
     	
     	if (parameterMap==null){
     		String[] s = {"Exception","no parameters provided!"};
@@ -601,7 +635,13 @@ public class Query
 		
 		Map<String, List<String>> parameterMap = new HashMap<String, List<String>>();
 		java.lang.reflect.Type typeOfT = new TypeToken<Map<String, List<String>>>(){}.getType();
-		parameterMap = gson.fromJson(jsonMap, typeOfT);   
+
+    	try {
+    		parameterMap = gson.fromJson(jsonMap, typeOfT);
+		} catch (Exception e) {
+			String[] s = {"Exception",e.getMessage()};			
+            return gson.toJson(s); 
+		}
 		
 		if (parameterMap==null){
     		String[] s = {"Exception","no parameters provided!"};
@@ -688,7 +728,13 @@ public class Query
     	
     	Map<String, List<String>> parameterMap = new HashMap<String, List<String>>();
     	java.lang.reflect.Type typeOfT = new TypeToken<Map<String, List<String>>>(){}.getType();
-    	parameterMap = gson.fromJson(jsonMap, typeOfT);
+
+    	try {
+    		parameterMap = gson.fromJson(jsonMap, typeOfT);
+		} catch (Exception e) {
+			String[] s = {"Exception",e.getMessage()};			
+            return gson.toJson(s); 
+		}
     	
     	if (parameterMap==null){
     		String[] s = {"Exception","no parameters provided!"};
@@ -775,7 +821,13 @@ public class Query
 		
 		Map<String, List<String>> parameterMap = new HashMap<String, List<String>>();
 		java.lang.reflect.Type typeOfT = new TypeToken<Map<String, List<String>>>(){}.getType();
-		parameterMap = gson.fromJson(jsonMap, typeOfT); 
+
+    	try {
+    		parameterMap = gson.fromJson(jsonMap, typeOfT);
+		} catch (Exception e) {
+			String[] s = {"Exception",e.getMessage()};			
+            return gson.toJson(s); 
+		}
 		
 		if (parameterMap==null){
     		String[] s = {"Exception","no parameters provided!"};
@@ -860,7 +912,13 @@ public class Query
     	
     	Map<String, String> parameterMap = new HashMap<String, String>();
     	java.lang.reflect.Type typeOfT = new TypeToken<Map<String, String>>(){}.getType();
-    	parameterMap = gson.fromJson(jsonMap, typeOfT);
+
+    	try {
+    		parameterMap = gson.fromJson(jsonMap, typeOfT);
+		} catch (Exception e) {
+			String[] s = {"Exception",e.getMessage()};			
+            return gson.toJson(s); 
+		}
     		
     	if (parameterMap==null){
     		String[] s = {"Exception","no parameters provided!"};
@@ -929,7 +987,13 @@ public class Query
     	
     	Map<String, String> parameterMap = new HashMap<String, String>();
     	java.lang.reflect.Type typeOfT = new TypeToken<Map<String, String>>(){}.getType();
-    	parameterMap = gson.fromJson(jsonMap, typeOfT);
+
+    	try {
+    		parameterMap = gson.fromJson(jsonMap, typeOfT);
+		} catch (Exception e) {
+			String[] s = {"Exception",e.getMessage()};			
+            return gson.toJson(s); 
+		}
     			
     	if (parameterMap==null){
     		String[] s = {"Exception","no parameters provided!"};
@@ -997,7 +1061,13 @@ public class Query
     	
     	Map<String, String> parameterMap = new HashMap<String, String>();
     	java.lang.reflect.Type typeOfT = new TypeToken<Map<String, String>>(){}.getType();
-    	parameterMap = gson.fromJson(jsonMap, typeOfT);
+
+    	try {
+    		parameterMap = gson.fromJson(jsonMap, typeOfT);
+		} catch (Exception e) {
+			String[] s = {"Exception",e.getMessage()};			
+            return gson.toJson(s); 
+		}
     	
     	if (parameterMap==null){
     		String[] s = {"Exception","no parameters provided!"};
@@ -1067,7 +1137,13 @@ public class Query
     	
     	Map<String, String> parameterMap = new HashMap<String, String>();
     	java.lang.reflect.Type typeOfT = new TypeToken<Map<String, String>>(){}.getType();
-    	parameterMap = gson.fromJson(jsonMap, typeOfT);
+
+    	try {
+    		parameterMap = gson.fromJson(jsonMap, typeOfT);
+		} catch (Exception e) {
+			String[] s = {"Exception",e.getMessage()};			
+            return gson.toJson(s); 
+		}
     	
     	if (parameterMap==null){
     		String[] s = {"Exception","no parameters provided!"};
