@@ -53,7 +53,7 @@ public class Diagnose extends ServerPlugin
     {
     	ManagerUtil.initManager(graphDbSevice);
     	List<String> l = new LinkedList<String>();
-    	l.addAll(Manager.instance().getIndexMap().keySet()); 
+    	l.addAll(Manager.instance().getNodeIndexMap().keySet()); 
     	return l;
     	   	
     }

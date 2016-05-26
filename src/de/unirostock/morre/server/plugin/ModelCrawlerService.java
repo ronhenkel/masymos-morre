@@ -24,6 +24,7 @@ import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
 import de.unirostock.morre.server.util.ManagerUtil;
+import de.unirostock.sems.masymos.database.ModelDeleter;
 import de.unirostock.sems.masymos.database.ModelInserter;
 import de.unirostock.sems.masymos.database.ModelLookup;
 import de.unirostock.sems.masymos.util.ModelDataHolder;
@@ -68,7 +69,7 @@ public class ModelCrawlerService extends ServerPlugin
     	} 
     	List<String> resultList = null;
     	try {
-    		resultList = ModelLookup.getModelHistory(fileID);
+    		resultList = ModelLookup.getDocumentHistory(fileID);
 		} catch (Exception e) {
 			String[] s = {"Exception",e.getMessage()};			
 			
@@ -133,7 +134,7 @@ public class ModelCrawlerService extends ServerPlugin
     	Map<String, String> resultMap= null;
     	try {
 
-    		resultMap = ModelLookup.getModelVersion(fileId, version);
+    		resultMap = ModelLookup.getDocumentVersion(fileId, version);
 		} catch (Exception e) {
 			String[] s = {"Exception",e.getMessage()};			
 			
@@ -193,7 +194,7 @@ public class ModelCrawlerService extends ServerPlugin
     	Map<String, String> resultMap= null;
     	try {
 
-    		resultMap = ModelLookup.getModel(fileId);
+    		resultMap = ModelLookup.getDocument(fileId);
 		} catch (Exception e) {
 			String[] s = {"Exception",e.getMessage()};			
 			
@@ -222,8 +223,8 @@ public class ModelCrawlerService extends ServerPlugin
     @POST
     @Produces( MediaType.APPLICATION_JSON )
     @Consumes( MediaType.APPLICATION_JSON ) 
-    @Path( "/add_model" )
-    public String addModel( 	@Context GraphDatabaseService graphDbSevice,
+    @Path( "/add_model_version" )
+    public String addModelVersion( 	@Context GraphDatabaseService graphDbSevice,
     										String jsonMap)
     {
     	ManagerUtil.initManager(graphDbSevice); 	
@@ -241,9 +242,9 @@ public class ModelCrawlerService extends ServerPlugin
     	
     	
 
-
+    	Long uID = Long.MIN_VALUE;
     	try {
-    		ModelInserter.addModel(mdh.getFileId(), mdh.getVersionId(), mdh.getParentMap(), new URL(mdh.getXmldoc()), gson.toJson(mdh.getMetaMap()), mdh.getModelType());
+    		uID = ModelInserter.addModelVersion(mdh.getFileId(), mdh.getVersionId(), mdh.getParentMap(), new URL(mdh.getXmldoc()), gson.toJson(mdh.getMetaMap()), mdh.getModelType());
 		} catch (Exception e) {
 			String[] s = {"Exception",e.getMessage()};			
 			
@@ -253,6 +254,7 @@ public class ModelCrawlerService extends ServerPlugin
    		resultMap.put("fileId", mdh.getFileId());
    		resultMap.put("versionId", mdh.getVersionId());
    		resultMap.put("ok", "true");
+   		resultMap.put("uID", uID.toString());
     		
    		return gson.toJson(resultMap);
 
@@ -263,12 +265,124 @@ public class ModelCrawlerService extends ServerPlugin
 	@GET
     @Produces( MediaType.APPLICATION_JSON ) 
 	@Consumes(MediaType.TEXT_PLAIN) 
+    @Path ( "/add_model_version" )
+    public String addModelVersion(@Context GraphDatabaseService graphDbSevice)
+    {
+		//ManagerUtil.initManager(graphDbSevice); 
+		//String s = "Retrieve models matching the provided keywords. The query is expanded to all indices.";
+		String[] s = {"'fileId':'($id)', 'versionId':'($id), 'xmldoc:'($PATH)', 'parents':{'($parentModelId)':[($parentVersionId)], 'modelType':(SBML|CELLML|SEDML)}"};
+		Gson gson = new Gson();
+		return gson.toJson(s);
+    }
+	
+    @POST
+    @Produces( MediaType.APPLICATION_JSON )
+    @Consumes( MediaType.APPLICATION_JSON ) 
+    @Path( "/add_model" )
+    public String addModel( 	@Context GraphDatabaseService graphDbSevice,
+    										String jsonMap)
+    {
+    	ManagerUtil.initManager(graphDbSevice); 	
+    	
+    	Gson gson = new Gson();
+       	Map<String, String> parameterMap = new HashMap<String, String>();
+    	java.lang.reflect.Type typeOfT = new TypeToken<Map<String, String>>(){}.getType();
+    	
+    	try {
+    		parameterMap = gson.fromJson(jsonMap, typeOfT);	
+		} catch (JsonSyntaxException e) {
+			String[] s = {"Exception","wrong parameters provided!","Stacktrace", e.getMessage()};
+    		return gson.toJson(s);
+		}    	
+
+    	Long uID = Long.MIN_VALUE;
+    	String fileId = null;
+    	URL url = null;
+    	String modelType = null;
+    	try {
+    	   	fileId = parameterMap.get("fileId");
+        	url = new URL(parameterMap.get("url"));
+        	modelType = parameterMap.get("modelType");
+    		uID = ModelInserter.addModel(fileId, url, modelType);
+		} catch (Exception e) {
+			String[] s = {"Exception",e.getMessage()};			
+			
+            return gson.toJson(s); 
+		}
+   		HashMap<String,String> resultMap = new HashMap<String,String>();
+   		resultMap.put("fileId", fileId);
+   		resultMap.put("url", url.toString());
+   		resultMap.put("ok", "true");
+   		resultMap.put("uID", uID.toString());
+    		
+   		return gson.toJson(resultMap);
+    }
+    
+	@GET
+    @Produces( MediaType.APPLICATION_JSON ) 
+	@Consumes(MediaType.TEXT_PLAIN) 
     @Path ( "/add_model" )
     public String addModel(@Context GraphDatabaseService graphDbSevice)
     {
 		//ManagerUtil.initManager(graphDbSevice); 
 		//String s = "Retrieve models matching the provided keywords. The query is expanded to all indices.";
-		String[] s = {"'fileId':'($id)', 'versionId':'($id), 'xmldoc:'($PATH)', 'parents':{'($parentModelId)':[($parentVersionId)], 'modelType':(SBML|CELLML|SEDML)}"};
+		String[] s = {"'fileId':'($id)', 'url':'($PATH)', 'modelType':(SBML|CELLML|SEDML)}"};
+		Gson gson = new Gson();
+		return gson.toJson(s);
+    }
+	
+    @POST
+    @Produces( MediaType.APPLICATION_JSON )
+    @Consumes( MediaType.APPLICATION_JSON ) 
+    @Path( "/delete_model" )
+    public String deleteModel( 	@Context GraphDatabaseService graphDbSevice,
+    										String jsonMap)
+    {
+    	//"'fileId':'($id)', 'versionId':'($id) [optional], 'uID':'($id)'"
+    	ManagerUtil.initManager(graphDbSevice); 	
+    	
+    	Gson gson = new Gson();
+    	
+       	Map<String, String> parameterMap = new HashMap<String, String>();
+    	java.lang.reflect.Type typeOfT = new TypeToken<Map<String, String>>(){}.getType();
+
+    	try {
+    		parameterMap = gson.fromJson(jsonMap, typeOfT);
+		} catch (Exception e) {
+			String[] s = {"Exception",e.getMessage()};			
+            return gson.toJson(s); 
+		}
+    	
+    	Long uId = Long.MIN_VALUE;
+    	String fileId = null;
+    	String versionId = null;
+    
+    	try {
+    		uId = Long.valueOf(parameterMap.get("uID"));	
+    		fileId = parameterMap.get("fileId");
+    		versionId = parameterMap.get("versionId");
+		} catch (Exception e) {
+			String[] s = {"Exception",e.getMessage()};			
+            return gson.toJson(s); 
+		}
+    	
+    	String res = "";
+    	if (StringUtils.isNotBlank(fileId) && StringUtils.isNotBlank(versionId)) res = ModelDeleter.deleteDocument(fileId, versionId, uId);
+    	if (StringUtils.isNotBlank(fileId) && StringUtils.isBlank(versionId)) res = ModelDeleter.deleteDocument(fileId, uId);
+    	if (StringUtils.isBlank(fileId) && StringUtils.isBlank(versionId)) res = ModelDeleter.deleteDocument(uId);
+    	return gson.toJson(res);
+     	
+    }	
+    
+	@GET
+    @Produces( MediaType.APPLICATION_JSON ) 
+	@Consumes(MediaType.TEXT_PLAIN) 
+    @Path ( "/delete_model" )
+    public String deleteModel(@Context GraphDatabaseService graphDbSevice)
+    {
+		//ManagerUtil.initManager(graphDbSevice); 
+		//String s = "Removes models matching the provided keywords. The query is expanded to all indices.";
+		String[] s = {"'fileId':'($id) [optional]', 'versionId':'($id) [optional]', 'uID':'($id)'"};
 		Gson gson = new Gson();
 		return gson.toJson(s);
     }
@@ -325,7 +439,7 @@ public class ModelCrawlerService extends ServerPlugin
     {
 		//ManagerUtil.initManager(graphDbSevice); 
 		//String s = "Retrieve models matching the provided keywords. The query is expanded to all indices.";
-		String[] s = {"'dropExistingIndex':'($bool)'}"};
+		String[] s = {"'dropExistingIndex':'($bool)'"};
 		Gson gson = new Gson();
 		return gson.toJson(s);
     }
