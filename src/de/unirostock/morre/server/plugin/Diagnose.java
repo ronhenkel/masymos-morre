@@ -67,7 +67,7 @@ public class Diagnose extends ServerPlugin
 //    }
     
     @Name( "cellml_model_query_features" )
-    @Description( "Returns a set of all supportet features to query CellMl models" )
+    @Description( "Returns a set of all supported features to query CellMl models" )
     @PluginTarget( GraphDatabaseService.class )
     public List<String> cellmlModelQueryFeatrues( @Source GraphDatabaseService graphDbSevice )
     {    
@@ -76,7 +76,7 @@ public class Diagnose extends ServerPlugin
     }
     
     @Name( "sbml_model_query_features" )
-    @Description( "Returns a set of all supportet features to query SBML models" )
+    @Description( "Returns a set of all supported features to query SBML models" )
     @PluginTarget( GraphDatabaseService.class )
     public List<String> sbmlModelQueryFeatrues( @Source GraphDatabaseService graphDbSevice )
     {    
@@ -85,7 +85,7 @@ public class Diagnose extends ServerPlugin
     }
     
     @Name( "annotation_query_features" )
-    @Description( "Returns a set of all supportet features to query model annotation" )
+    @Description( "Returns a set of all supported features to query model annotation" )
     @PluginTarget( GraphDatabaseService.class )
     public List<String> annotationQueryFeatrues( @Source GraphDatabaseService graphDbSevice )
     {    
@@ -94,7 +94,7 @@ public class Diagnose extends ServerPlugin
     }
     
     @Name( "person_query_features" )
-    @Description( "Returns a set of all supportet features to query persons related to a model" )
+    @Description( "Returns a set of all supported features to query persons related to a model" )
     @PluginTarget( GraphDatabaseService.class )
     public List<String> personQueryFeatrues( @Source GraphDatabaseService graphDbSevice )
     {    
@@ -103,7 +103,7 @@ public class Diagnose extends ServerPlugin
     }
     
     @Name( "publication_query_features" )
-    @Description( "Returns a set of all supportet features to query publications related to a model" )
+    @Description( "Returns a set of all supported features to query publications related to a model" )
     @PluginTarget( GraphDatabaseService.class )
     public List<String> publicationQueryFeatrues( @Source GraphDatabaseService graphDbSevice )
     {    

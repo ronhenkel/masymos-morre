@@ -1,7 +1,7 @@
 package de.unirostock.morre.server.plugin;
 
+import java.net.URL;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.Consumes;
@@ -19,202 +19,21 @@ import org.neo4j.server.plugins.Description;
 import org.neo4j.server.plugins.ServerPlugin;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
 import de.unirostock.morre.server.util.ManagerUtil;
-import de.unirostock.sems.masymos.database.ModelLookup;
+import de.unirostock.sems.masymos.database.ModelDeleter;
+import de.unirostock.sems.masymos.database.ModelInserter;
+import de.unirostock.sems.masymos.util.ModelDataHolder;
 
 @MetaInfServices( ServerPlugin.class )
-@Path("/model_crawler_service")
+@Path("/model_update_service")
 @Description( "An extension to the Neo4j Server to test if model API is alive" )
-public class ModelCrawlerService extends ServerPlugin
+public class ModelUpdateService extends ServerPlugin
 {
 
 	
-    @POST
-    @Produces( MediaType.APPLICATION_JSON )
-    @Consumes( MediaType.APPLICATION_JSON ) 
-    @Path( "/get_model_history" )
-    public String getModelHistory( 	@Context GraphDatabaseService graphDbSevice,
-    										 String jsonMap)
-    {
-    	ManagerUtil.initManager(graphDbSevice); 	
-    	
-    	Gson gson = new Gson();
-    	
-    	Map<String, String> parameterMap = new HashMap<String, String>();
-    	java.lang.reflect.Type typeOfT = new TypeToken<Map<String, String>>(){}.getType();
-
-    	try {
-    		parameterMap = gson.fromJson(jsonMap, typeOfT);
-		} catch (Exception e) {
-			String[] s = {"Exception",e.getMessage()};			
-            return gson.toJson(s); 
-		}
-    	
-    	if (parameterMap==null){
-    		String[] s = {"Exception","no parameters provided!"};
-    		return gson.toJson(s);
-    	} 		
-
-    	String fileID = parameterMap.get("fileId");
-    	if (StringUtils.isEmpty(fileID)){
-    		String[] s = {"Exception","no file id provided!"};
-    		return gson.toJson(s);
-    	} 
-    	List<String> resultList = null;
-    	try {
-    		resultList = ModelLookup.getDocumentHistory(fileID);
-		} catch (Exception e) {
-			String[] s = {"Exception",e.getMessage()};			
-			
-            return gson.toJson(s); 
-		}
-   		
-    		 return gson.toJson(resultList);
-
-   
-
-    }
-  
-	@GET
-    @Produces( MediaType.APPLICATION_JSON ) 
-	@Consumes(MediaType.TEXT_PLAIN) 
-    @Path ( "/get_model_history" )
-    public String getModelHistory(@Context GraphDatabaseService graphDbSevice)
-    {
-		//ManagerUtil.initManager(graphDbSevice); 
-		//String s = "Retrieve models matching the provided keywords. The query is expanded to all indices.";
-		String[] s = {"'fileid':'($id)'"};
-		Gson gson = new Gson();
-		return gson.toJson(s);
-    }
-	
-	
-    @POST
-    @Produces( MediaType.APPLICATION_JSON )
-    @Consumes( MediaType.APPLICATION_JSON ) 
-    @Path( "/get_model_version" )
-    public String getModelVersion( 	@Context GraphDatabaseService graphDbSevice,
-    										String jsonMap)
-    {
-    	ManagerUtil.initManager(graphDbSevice); 	
-    	
-    	Gson gson = new Gson();
-    	
-    	Map<String, String> parameterMap = new HashMap<String, String>();
-    	java.lang.reflect.Type typeOfT = new TypeToken<Map<String, String>>(){}.getType();
-
-    	try {
-    		parameterMap = gson.fromJson(jsonMap, typeOfT);
-		} catch (Exception e) {
-			String[] s = {"Exception",e.getMessage()};			
-            return gson.toJson(s); 
-		}
-    	
-    	if (parameterMap==null){
-    		String[] s = {"Exception","no parameters provided!"};
-    		return gson.toJson(s);
-    	} 		
-
-    	String fileId = parameterMap.get("fileId");
-    	if (StringUtils.isEmpty(fileId)){
-    		String[] s = {"Exception","no model id provided!"};
-    		return gson.toJson(s);
-    	} 
-    	String version = parameterMap.get("versionId");
-    	if (StringUtils.isEmpty(version)){
-    		return gson.toJson("newest version of model"); //TODO
-    	} 
-    	Map<String, String> resultMap= null;
-    	try {
-
-    		resultMap = ModelLookup.getDocumentVersion(fileId, version);
-		} catch (Exception e) {
-			String[] s = {"Exception",e.getMessage()};			
-			
-            return gson.toJson(s); 
-		}
-   		
-    		 return gson.toJson(resultMap);
-
-   
-
-    }
-    
-	@GET
-    @Produces( MediaType.APPLICATION_JSON ) 
-	@Consumes(MediaType.TEXT_PLAIN) 
-    @Path ( "/get_model_version" )
-    public String getModelVersion(@Context GraphDatabaseService graphDbSevice)
-    {
-		//ManagerUtil.initManager(graphDbSevice); 
-		//String s = "Retrieve models matching the provided keywords. The query is expanded to all indices.";
-		String[] s = {"'fileId':'($id)', 'versionId':'($id)"};
-		Gson gson = new Gson();
-		return gson.toJson(s);
-    }
-	
-    @POST
-    @Produces( MediaType.APPLICATION_JSON )
-    @Consumes( MediaType.APPLICATION_JSON ) 
-    @Path( "/get_model" )
-    public String getModel( 	@Context GraphDatabaseService graphDbSevice,
-    										String jsonMap)
-    {
-    	ManagerUtil.initManager(graphDbSevice); 	
-    	
-    	Gson gson = new Gson();
-    	
-    	Map<String, String> parameterMap = new HashMap<String, String>();
-    	java.lang.reflect.Type typeOfT = new TypeToken<Map<String, String>>(){}.getType();
-
-    	try {
-    		parameterMap = gson.fromJson(jsonMap, typeOfT);
-		} catch (Exception e) {
-			String[] s = {"Exception",e.getMessage()};			
-            return gson.toJson(s); 
-		}
-    	
-    	if (parameterMap==null){
-    		String[] s = {"Exception","no parameters provided!"};
-    		return gson.toJson(s);
-    	} 		
-
-    	String fileId = parameterMap.get("fileId");
-    	if (StringUtils.isEmpty(fileId)){
-    		String[] s = {"Exception","no model id provided!"};
-    		return gson.toJson(s);
-    	} 
-    	Map<String, String> resultMap= null;
-    	try {
-
-    		resultMap = ModelLookup.getDocument(fileId);
-		} catch (Exception e) {
-			String[] s = {"Exception",e.getMessage()};			
-			
-            return gson.toJson(s); 
-		}
-   		
-    		 return gson.toJson(resultMap);//TODO
-
-   
-
-    }
-    
-	@GET
-    @Produces( MediaType.APPLICATION_JSON ) 
-	@Consumes(MediaType.TEXT_PLAIN) 
-    @Path ( "/get_model" )
-    public String getModel(@Context GraphDatabaseService graphDbSevice)
-    {
-		//ManagerUtil.initManager(graphDbSevice); 
-		//String s = "Retrieve models matching the provided keywords. The query is expanded to all indices.";
-		String[] s = {"'fileId':'($id)'"};
-		Gson gson = new Gson();
-		return gson.toJson(s);
-    }
-/*	
     @POST
     @Produces( MediaType.APPLICATION_JSON )
     @Consumes( MediaType.APPLICATION_JSON ) 
@@ -361,7 +180,7 @@ public class ModelCrawlerService extends ServerPlugin
             return gson.toJson(s); 
 		}
     	
-    	String res = "";
+    	Map<String, String> res = null;
     	if (StringUtils.isNotBlank(fileId) && StringUtils.isNotBlank(versionId)) res = ModelDeleter.deleteDocument(fileId, versionId, uId);
     	if (StringUtils.isNotBlank(fileId) && StringUtils.isBlank(versionId)) res = ModelDeleter.deleteDocument(fileId, uId);
     	if (StringUtils.isBlank(fileId) && StringUtils.isBlank(versionId)) res = ModelDeleter.deleteDocument(uId);
@@ -438,5 +257,5 @@ public class ModelCrawlerService extends ServerPlugin
 		Gson gson = new Gson();
 		return gson.toJson(s);
     }
-*/  
+  
 }
