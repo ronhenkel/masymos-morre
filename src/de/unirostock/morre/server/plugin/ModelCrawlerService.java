@@ -214,7 +214,7 @@ public class ModelCrawlerService extends ServerPlugin
 		Gson gson = new Gson();
 		return gson.toJson(s);
     }
-/*	
+	
     @POST
     @Produces( MediaType.APPLICATION_JSON )
     @Consumes( MediaType.APPLICATION_JSON ) 
@@ -438,5 +438,4 @@ public class ModelCrawlerService extends ServerPlugin
 		Gson gson = new Gson();
 		return gson.toJson(s);
     }
-*/  
 }
