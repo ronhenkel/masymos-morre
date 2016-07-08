@@ -14,6 +14,8 @@ import org.neo4j.server.plugins.Name;
 import org.neo4j.server.plugins.PluginTarget;
 import org.neo4j.server.plugins.ServerPlugin;
 import org.neo4j.server.plugins.Source;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.unirostock.morre.server.util.ManagerUtil;
 import de.unirostock.sems.masymos.database.Manager;
@@ -26,8 +28,11 @@ import de.unirostock.sems.masymos.query.types.SBMLModelQuery;
 //@Path("/diagnose")
 @MetaInfServices( ServerPlugin.class )
 @Description( "An extension to the Neo4j Server to test if model API is alive" )
-public class Diagnose extends ServerPlugin
-{
+public class Diagnose extends ServerPlugin{
+	
+	final  Logger logger = LoggerFactory.getLogger(Diagnose.class);
+	
+	
     @Name( "is_model_manager_alive" )
     @Description( "Get true if manager is alive else false" )
     @PluginTarget( GraphDatabaseService.class )
@@ -39,7 +44,7 @@ public class Diagnose extends ServerPlugin
     	try {
 			ManagerUtil.initManager(graphDbSevice);
 		} catch (Exception e) {
-			
+			logger.error(e.getMessage());
 			return false;
 		}
     	return true;

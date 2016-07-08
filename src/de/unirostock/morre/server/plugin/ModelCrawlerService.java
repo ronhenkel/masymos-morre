@@ -17,6 +17,8 @@ import org.kohsuke.MetaInfServices;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.server.plugins.Description;
 import org.neo4j.server.plugins.ServerPlugin;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -29,6 +31,8 @@ import de.unirostock.sems.masymos.database.ModelLookup;
 @Description( "An extension to the Neo4j Server to test if model API is alive" )
 public class ModelCrawlerService extends ServerPlugin
 {
+	
+	final static Logger logger = LoggerFactory.getLogger(ModelCrawlerService.class);
 
 	
     @POST
@@ -48,6 +52,7 @@ public class ModelCrawlerService extends ServerPlugin
     	try {
     		parameterMap = gson.fromJson(jsonMap, typeOfT);
 		} catch (Exception e) {
+			logger.error(e.getMessage());
 			String[] s = {"Exception",e.getMessage()};			
             return gson.toJson(s); 
 		}
@@ -66,6 +71,7 @@ public class ModelCrawlerService extends ServerPlugin
     	try {
     		resultList = ModelLookup.getDocumentHistory(fileID);
 		} catch (Exception e) {
+			logger.error(e.getMessage());
 			String[] s = {"Exception",e.getMessage()};			
 			
             return gson.toJson(s); 
@@ -108,6 +114,7 @@ public class ModelCrawlerService extends ServerPlugin
     	try {
     		parameterMap = gson.fromJson(jsonMap, typeOfT);
 		} catch (Exception e) {
+			logger.error(e.getMessage());
 			String[] s = {"Exception",e.getMessage()};			
             return gson.toJson(s); 
 		}
@@ -131,6 +138,7 @@ public class ModelCrawlerService extends ServerPlugin
 
     		resultMap = ModelLookup.getDocumentVersion(fileId, version);
 		} catch (Exception e) {
+			logger.error(e.getMessage());
 			String[] s = {"Exception",e.getMessage()};			
 			
             return gson.toJson(s); 
@@ -172,6 +180,7 @@ public class ModelCrawlerService extends ServerPlugin
     	try {
     		parameterMap = gson.fromJson(jsonMap, typeOfT);
 		} catch (Exception e) {
+			logger.error(e.getMessage());
 			String[] s = {"Exception",e.getMessage()};			
             return gson.toJson(s); 
 		}
@@ -191,6 +200,7 @@ public class ModelCrawlerService extends ServerPlugin
 
     		resultMap = ModelLookup.getDocument(fileId);
 		} catch (Exception e) {
+			logger.error(e.getMessage());
 			String[] s = {"Exception",e.getMessage()};			
 			
             return gson.toJson(s); 

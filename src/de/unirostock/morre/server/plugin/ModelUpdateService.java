@@ -17,6 +17,8 @@ import org.kohsuke.MetaInfServices;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.server.plugins.Description;
 import org.neo4j.server.plugins.ServerPlugin;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
@@ -33,6 +35,7 @@ import de.unirostock.sems.masymos.util.ModelDataHolder;
 public class ModelUpdateService extends ServerPlugin
 {
 
+	final static Logger logger = LoggerFactory.getLogger(ModelUpdateService.class);
 	
     @POST
     @Produces( MediaType.APPLICATION_JSON )
@@ -50,6 +53,7 @@ public class ModelUpdateService extends ServerPlugin
     	try {
     		mdh = gson.fromJson(jsonMap, typeOfT);	
 		} catch (JsonSyntaxException e) {
+			logger.error(e.getMessage());
 			String[] s = {"Exception","wrong parameters provided!","Stacktrace", e.getMessage()};
     		return gson.toJson(s);
 		}
@@ -60,6 +64,7 @@ public class ModelUpdateService extends ServerPlugin
     	try {
     		uID = ModelInserter.addModelVersion(mdh.getFileId(), mdh.getVersionId(), mdh.getParentMap(), new URL(mdh.getXmldoc()), gson.toJson(mdh.getMetaMap()), mdh.getModelType());
 		} catch (Exception e) {
+			logger.error(e.getMessage());
 			String[] s = {"Exception",e.getMessage()};			
 			
             return gson.toJson(s); 
@@ -105,6 +110,7 @@ public class ModelUpdateService extends ServerPlugin
     	try {
     		parameterMap = gson.fromJson(jsonMap, typeOfT);	
 		} catch (JsonSyntaxException e) {
+			logger.error(e.getMessage());
 			String[] s = {"Exception","wrong parameters provided!","Stacktrace", e.getMessage()};
     		return gson.toJson(s);
 		}    	
@@ -119,6 +125,7 @@ public class ModelUpdateService extends ServerPlugin
         	modelType = parameterMap.get("modelType");
     		uID = ModelInserter.addModel(fileId, url, modelType);
 		} catch (Exception e) {
+			logger.error(e.getMessage());
 			String[] s = {"Exception",e.getMessage()};			
 			
             return gson.toJson(s); 
@@ -163,6 +170,7 @@ public class ModelUpdateService extends ServerPlugin
     	try {
     		parameterMap = gson.fromJson(jsonMap, typeOfT);
 		} catch (Exception e) {
+			logger.error(e.getMessage());
 			String[] s = {"Exception",e.getMessage()};			
             return gson.toJson(s); 
 		}
@@ -176,6 +184,7 @@ public class ModelUpdateService extends ServerPlugin
     		fileId = parameterMap.get("fileId");
     		versionId = parameterMap.get("versionId");
 		} catch (Exception e) {
+			logger.error(e.getMessage());
 			String[] s = {"Exception",e.getMessage()};			
             return gson.toJson(s); 
 		}
@@ -218,6 +227,7 @@ public class ModelUpdateService extends ServerPlugin
     	try {
     		parameterMap = gson.fromJson(jsonMap, typeOfT);
 		} catch (Exception e) {
+			logger.error(e.getMessage());
 			String[] s = {"Exception",e.getMessage()};			
             return gson.toJson(s); 
 		}
@@ -226,12 +236,13 @@ public class ModelUpdateService extends ServerPlugin
     	try {
     		dropExistingIndex = Boolean.parseBoolean(parameterMap.get("dropExistingIndex"));	
 		} catch (Exception e) {
-
+			logger.error(e.getMessage());
 		}
     	
     	try {
     		ModelInserter.buildIndex(dropExistingIndex);
 		} catch (Exception e) {
+			logger.error(e.getMessage());
 			String[] s = {"Exception",e.getMessage()};			
 			
             return gson.toJson(s); 
