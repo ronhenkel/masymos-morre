@@ -16,6 +16,8 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang3.StringUtils;
 import org.neo4j.graphdb.GraphDatabaseService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -49,8 +51,9 @@ import de.unirostock.sems.masymos.util.ResultSetUtil;
 
 //@MetaInfServices( ServerPlugin.class )
 @Path("/query")
-public class Query
-{
+public class Query{
+	
+	final static Logger logger = LoggerFactory.getLogger(Query.class);
 
     @POST
     @Produces( MediaType.APPLICATION_JSON )
@@ -69,6 +72,7 @@ public class Query
     	try {
     		parameterMap = gson.fromJson(jsonMap, typeOfT);
 		} catch (Exception e) {
+			logger.error(e.getMessage());
 			String[] s = {"Exception",e.getMessage()};			
             return gson.toJson(s); 
 		}
@@ -111,6 +115,7 @@ public class Query
     		results = QueryAdapter.executeMultipleQueriesForModels(qL);
     		results = ResultSetUtil.collateModelResultSetByModelId(results);
 		} catch (Exception e) {
+			logger.error(e.getMessage());
 			String[] s = {"Exception",e.getMessage()};			
 			
             return gson.toJson(s); 
@@ -160,6 +165,7 @@ public class Query
     	try {
     		parameterMap = gson.fromJson(jsonMap, typeOfT);
 		} catch (Exception e) {
+			logger.error(e.getMessage());
 			String[] s = {"Exception",e.getMessage()};			
             return gson.toJson(s); 
 		}
@@ -188,6 +194,7 @@ public class Query
     	try {
     		results = QueryAdapter.executeMultipleQueriesForModels(qL);
 		} catch (Exception e) {
+			logger.error(e.getMessage());
 			String[] s = {"Exception",e.getMessage()};			
 			
             return gson.toJson(s); 
@@ -237,6 +244,7 @@ public class Query
     	try {
     		parameterMap = gson.fromJson(jsonMap, typeOfT);
 		} catch (Exception e) {
+			logger.error(e.getMessage());
 			String[] s = {"Exception",e.getMessage()};			
             return gson.toJson(s); 
 		}
@@ -288,7 +296,9 @@ public class Query
 			CellMLModelFieldEnumerator field;
 			try {
 				field = CellMLModelFieldEnumerator.valueOf(feature.trim().toUpperCase(Locale.ENGLISH));
-			} catch (Exception e) {				
+			} catch (Exception e) {
+				logger.warn("The feature " + feature + " is not available in CellMLModelQuery");
+				logger.warn(e.getMessage());
 				//feature is not available
 				continue;
 			}			
@@ -301,6 +311,7 @@ public class Query
         	try {
         		results = QueryAdapter.executeMultipleQueriesForModels(qL);
     		} catch (Exception e) {
+    			logger.error(e.getMessage());
     			String[] s = {"Exception",e.getMessage()};			
     			return gson.toJson(s);
     		}
@@ -355,6 +366,7 @@ public class Query
     	try {
     		parameterMap = gson.fromJson(jsonMap, typeOfT);
 		} catch (Exception e) {
+			logger.error(e.getMessage());
 			String[] s = {"Exception",e.getMessage()};			
             return gson.toJson(s); 
 		}
@@ -383,6 +395,7 @@ public class Query
     	try {
     		results = QueryAdapter.executeMultipleQueriesForModels(sL);
 		} catch (Exception e) {
+			logger.error(e.getMessage());
 			String[] s = {"Exception",e.getMessage()};			
 			
             return gson.toJson(s); 
@@ -432,6 +445,7 @@ public class Query
     	try {
     		parameterMap = gson.fromJson(jsonMap, typeOfT);
 		} catch (Exception e) {
+			logger.error(e.getMessage());
 			String[] s = {"Exception",e.getMessage()};			
             return gson.toJson(s); 
 		}
@@ -484,7 +498,8 @@ public class Query
 			try {
 				field = SBMLModelFieldEnumerator.valueOf(feature.trim().toUpperCase(Locale.ENGLISH));
 			} catch (Exception e) {				
-				//feature is not available
+				logger.warn("The featrue " + feature + " is not avialable in SBMLModelQuery");
+				logger.warn(e.getMessage());
 				continue;
 			}			
 			sq.addQueryClause(field, keyword);
@@ -496,6 +511,7 @@ public class Query
         	try {
         		results = QueryAdapter.executeMultipleQueriesForModels(sL);
     		} catch (Exception e) {
+    			logger.error(e.getMessage());
     			String[] s = {"Exception",e.getMessage()};			
     			return gson.toJson(s);
     		}
@@ -549,6 +565,7 @@ public class Query
     	try {
     		parameterMap = gson.fromJson(jsonMap, typeOfT);
 		} catch (Exception e) {
+			logger.error(e.getMessage());
 			String[] s = {"Exception",e.getMessage()};			
             return gson.toJson(s); 
 		}
@@ -578,8 +595,9 @@ public class Query
 			PublicationFieldEnumerator field;
 			try {
 				field = PublicationFieldEnumerator.valueOf(feature.trim().toUpperCase(Locale.ENGLISH));
-			} catch (Exception e) {				
-				//feature is not available
+			} catch (Exception e) {			
+				logger.warn("The featrue " + feature + " is not available in PublicationQuery.");
+				logger.warn(e.getMessage());
 				continue;
 			}			
 			pq.addQueryClause(field, keyword);
@@ -589,6 +607,7 @@ public class Query
            	try {
         		results = QueryAdapter.executePublicationQuery(pq);
     		} catch (Exception e) {
+    			logger.error(e.getMessage());
     			String[] s = {"Exception",e.getMessage()};			
     			return gson.toJson(s);
     		}
@@ -640,6 +659,7 @@ public class Query
     	try {
     		parameterMap = gson.fromJson(jsonMap, typeOfT);
 		} catch (Exception e) {
+			logger.error(e.getMessage());
 			String[] s = {"Exception",e.getMessage()};			
             return gson.toJson(s); 
 		}
@@ -669,7 +689,9 @@ public class Query
 			PublicationFieldEnumerator field;
 			try {
 				field = PublicationFieldEnumerator.valueOf(feature.trim().toUpperCase(Locale.ENGLISH));
-			} catch (Exception e) {				
+			} catch (Exception e) {		
+				logger.warn("The feature " + feature + " is not available in PublicationQuery");
+				logger.warn(e.getMessage());
 				//feature is not available
 				continue;
 			}			
@@ -682,6 +704,7 @@ public class Query
 	    	try {
 	    		results = QueryAdapter.executeMultipleQueriesForModels(qL);
 			} catch (Exception e) {
+				logger.error(e.getMessage());
 				String[] s = {"Exception",e.getMessage()};			
 				return gson.toJson(s);
 			}
@@ -733,6 +756,7 @@ public class Query
     	try {
     		parameterMap = gson.fromJson(jsonMap, typeOfT);
 		} catch (Exception e) {
+			logger.error(e.getMessage());
 			String[] s = {"Exception",e.getMessage()};			
             return gson.toJson(s); 
 		}
@@ -762,7 +786,9 @@ public class Query
 			PersonFieldEnumerator field;
 			try {
 				field = PersonFieldEnumerator.valueOf(feature.trim().toUpperCase(Locale.ENGLISH));
-			} catch (Exception e) {				
+			} catch (Exception e) {			
+				logger.warn("The feature " + feature + " is not available in PersonQuery");
+				logger.warn(e.getMessage());
 				//feature is not available
 				continue;
 			}			
@@ -775,6 +801,7 @@ public class Query
         	try {
         		results = QueryAdapter.executeMultipleQueriesForModels(qL);
     		} catch (Exception e) {
+    			logger.error(e.getMessage());
     			String[] s = {"Exception",e.getMessage()};			
     			return gson.toJson(s);
     		}
@@ -826,6 +853,7 @@ public class Query
     	try {
     		parameterMap = gson.fromJson(jsonMap, typeOfT);
 		} catch (Exception e) {
+			logger.error(e.getMessage());
 			String[] s = {"Exception",e.getMessage()};			
             return gson.toJson(s); 
 		}
@@ -855,7 +883,9 @@ public class Query
 			PersonFieldEnumerator field;
 			try {
 				field = PersonFieldEnumerator.valueOf(feature.trim().toUpperCase(Locale.ENGLISH));
-			} catch (Exception e) {				
+			} catch (Exception e) {			
+				logger.warn("The featrue " + feature + " is not avialable in PersonQuery");
+				logger.warn(e.getMessage());
 				//feature is not available
 				continue;
 			}			
@@ -866,6 +896,7 @@ public class Query
 	   	   	try {
 	    		results = QueryAdapter.executePersonQuery(pq);
 			} catch (Exception e) {
+				logger.error(e.getMessage());
 				String[] s = {"Exception",e.getMessage()};			
 				return gson.toJson(s);
 			}
@@ -917,6 +948,7 @@ public class Query
     	try {
     		parameterMap = gson.fromJson(jsonMap, typeOfT);
 		} catch (Exception e) {
+			logger.error(e.getMessage());
 			String[] s = {"Exception",e.getMessage()};			
             return gson.toJson(s); 
 		}
@@ -945,6 +977,7 @@ public class Query
     	try {
     		results = QueryAdapter.executeMultipleQueriesForModels(qL);
 		} catch (Exception e) {
+			logger.error(e.getMessage());
 			String[] s = {"Exception",e.getMessage()};			
 			
             return gson.toJson(s); 
@@ -992,6 +1025,7 @@ public class Query
     	try {
     		parameterMap = gson.fromJson(jsonMap, typeOfT);
 		} catch (Exception e) {
+			logger.error(e.getMessage());
 			String[] s = {"Exception",e.getMessage()};			
             return gson.toJson(s); 
 		}
@@ -1018,6 +1052,7 @@ public class Query
     	try {
     		results = QueryAdapter.executeAnnotationQuery(cq);
 		} catch (Exception e) {
+			logger.error(e.getMessage());
 			String[] s = {"Exception",e.getMessage()};			
 			
             return gson.toJson(s); 
@@ -1066,6 +1101,7 @@ public class Query
     	try {
     		parameterMap = gson.fromJson(jsonMap, typeOfT);
 		} catch (Exception e) {
+			logger.error(e.getMessage());
 			String[] s = {"Exception",e.getMessage()};			
             return gson.toJson(s); 
 		}
@@ -1095,6 +1131,7 @@ public class Query
     	results = QueryAdapter.executeSedmlQuery(sedq);
     	//results = ResultSetUtil.collateModelResultSetByModelId(results);
     	} catch (Exception e) {
+    		logger.error(e.getMessage());
     	String[] s = {"Exception",e.getMessage()};			
     	
     	return gson.toJson(s); 
@@ -1142,6 +1179,7 @@ public class Query
     	try {
     		parameterMap = gson.fromJson(jsonMap, typeOfT);
 		} catch (Exception e) {
+			logger.error(e.getMessage());
 			String[] s = {"Exception",e.getMessage()};			
             return gson.toJson(s); 
 		}
@@ -1196,6 +1234,7 @@ public class Query
     		List<List<VersionResultSet>> splitResults = RankAggregationUtil.splitModelResultSetByIndex(results);
     		results = RankAggregation.aggregate(splitResults, initialAggregateRanker, aggregationType, rankersWeights);
 		} catch (Exception e) {
+			logger.error(e.getMessage());
 			String[] s = {"Exception",e.getMessage()};			
 			
             return gson.toJson(s); 
