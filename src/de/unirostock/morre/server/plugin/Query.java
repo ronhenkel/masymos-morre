@@ -27,6 +27,7 @@ import de.unirostock.sems.masymos.configuration.RankAggregationType;
 import de.unirostock.sems.masymos.configuration.RankAggregationType.Types;
 import de.unirostock.sems.masymos.query.IQueryInterface;
 import de.unirostock.sems.masymos.query.QueryAdapter;
+import de.unirostock.sems.masymos.query.aggregation.GroupVersions;
 import de.unirostock.sems.masymos.query.aggregation.RankAggregation;
 import de.unirostock.sems.masymos.query.enumerator.AnnotationFieldEnumerator;
 import de.unirostock.sems.masymos.query.enumerator.CellMLModelFieldEnumerator;
@@ -1312,6 +1313,7 @@ public class Query{
     	
     	List<VersionResultSet> results = null;
     	List<VersionResultSet> initialAggregateRanker = null;
+		List<ModelResultSet> groupedResults = new LinkedList<ModelResultSet>();
     	
        	CellMLModelQuery cq = new CellMLModelQuery();
     	cq.addQueryClause(CellMLModelFieldEnumerator.NONE, keyword);
@@ -1336,17 +1338,16 @@ public class Query{
     		initialAggregateRanker = ResultSetUtil.collateModelResultSetByModelId(results);
     		List<List<VersionResultSet>> splitResults = RankAggregationUtil.splitModelResultSetByIndex(results);
     		results = RankAggregation.aggregate(splitResults, initialAggregateRanker, aggregationType, rankersWeights);
-    		
+    		groupedResults = GroupVersions.groupVersions(results);
 		} catch (Exception e) {
 			String[] s = {"Exception",e.getMessage()};			
 			
             return gson.toJson(s); 
 		}
     	
-    	if ((results!=null) && !results.isEmpty()) {
-    		results = results.subList(0, Math.min(topn, results.size()));
-    		return gson.toJson(results);
-    		
+    	if ((groupedResults!=null) && !groupedResults.isEmpty()) {
+    		groupedResults = groupedResults.subList(0, Math.min(topn, groupedResults.size()));
+    		return gson.toJson(groupedResults);
     	}
     	else {
     		String[] s = {"#Results","0"};
@@ -1359,7 +1360,7 @@ public class Query{
 	@GET
     @Produces( MediaType.APPLICATION_JSON ) 
 	@Consumes(MediaType.TEXT_PLAIN) 
-    @Path( "/aggregated_model_query" )
+    @Path( "/grouped_aggregated_model_query" )
     public String groupedAggregatedModelQuery(@Context GraphDatabaseService graphDbSevice)
     {
 		ManagerUtil.initManager(graphDbSevice); 
