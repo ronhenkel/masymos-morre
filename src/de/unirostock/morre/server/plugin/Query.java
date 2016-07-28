@@ -1204,7 +1204,7 @@ public class Query{
     		aggregationType = Types.DEFAULT;  
     	} else aggregationType = RankAggregationType.stringToRankAggregationType(aggregationTypeString);
     	String rankersWeightsString = parameterMap.get("rankersWeights");
-    	int rankersWeights = Integer.parseInt(rankersWeightsString);
+    	int rankersWeights = Integer.parseInt(rankersWeightsString); //possible exception if not provided
     	
     	List<ModelResultSet> results = null;
     	List<ModelResultSet> initialAggregateRanker = null;
