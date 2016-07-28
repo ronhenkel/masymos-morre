@@ -27,6 +27,7 @@ import de.unirostock.sems.masymos.configuration.RankAggregationType;
 import de.unirostock.sems.masymos.configuration.RankAggregationType.Types;
 import de.unirostock.sems.masymos.query.IQueryInterface;
 import de.unirostock.sems.masymos.query.QueryAdapter;
+import de.unirostock.sems.masymos.query.aggregation.GroupVersions;
 import de.unirostock.sems.masymos.query.aggregation.RankAggregation;
 import de.unirostock.sems.masymos.query.enumerator.AnnotationFieldEnumerator;
 import de.unirostock.sems.masymos.query.enumerator.CellMLModelFieldEnumerator;
@@ -36,6 +37,7 @@ import de.unirostock.sems.masymos.query.enumerator.SBMLModelFieldEnumerator;
 import de.unirostock.sems.masymos.query.enumerator.SedmlFieldEnumerator;
 import de.unirostock.sems.masymos.query.results.AnnotationResultSet;
 import de.unirostock.sems.masymos.query.results.ModelResultSet;
+import de.unirostock.sems.masymos.query.results.VersionResultSet;
 import de.unirostock.sems.masymos.query.results.PersonResultSet;
 import de.unirostock.sems.masymos.query.results.PublicationResultSet;
 import de.unirostock.sems.masymos.query.results.SedmlResultSet;
@@ -91,7 +93,7 @@ public class Query{
     	if (!StringUtils.isEmpty(topns) && StringUtils.isNumeric(topns)){
     		topn = Integer.valueOf(topns);
     	}
-    	List<ModelResultSet> results = null;
+    	List<VersionResultSet> results = null;
     	
        	CellMLModelQuery cq = new CellMLModelQuery();
     	cq.addQueryClause(CellMLModelFieldEnumerator.NONE, keyword);
@@ -184,7 +186,7 @@ public class Query{
     	if (!StringUtils.isEmpty(topns) && StringUtils.isNumeric(topns)){
     		topn = Integer.valueOf(topns);
     	}
-    	List<ModelResultSet> results = null;
+    	List<VersionResultSet> results = null;
     	
        	CellMLModelQuery cq = new CellMLModelQuery();
     	cq.addQueryClause(CellMLModelFieldEnumerator.NONE, keyword);     	
@@ -304,7 +306,7 @@ public class Query{
 			cq.addQueryClause(field, keyword);
 		}
     	   	
-    	List<ModelResultSet> results = null;
+    	List<VersionResultSet> results = null;
        	List<IQueryInterface> qL = new LinkedList<IQueryInterface>();
     		qL.add(cq);
         	try {
@@ -385,7 +387,7 @@ public class Query{
     	if (!StringUtils.isEmpty(topns) && StringUtils.isNumeric(topns)){
     		topn = Integer.valueOf(topns);
     	}
-    	List<ModelResultSet> results = null;
+    	List<VersionResultSet> results = null;
     	
        	SBMLModelQuery sq = new SBMLModelQuery();
     	sq.addQueryClause(SBMLModelFieldEnumerator.NONE, keyword);     	
@@ -504,7 +506,7 @@ public class Query{
 			sq.addQueryClause(field, keyword);
 		}
     	   	
-    	List<ModelResultSet> results = null;
+    	List<VersionResultSet> results = null;
        	List<IQueryInterface> sL = new LinkedList<IQueryInterface>();
     		sL.add(sq);
         	try {
@@ -697,7 +699,7 @@ public class Query{
 			pq.addQueryClause(field, keyword);
 		}
 		   	
-		List<ModelResultSet> results = null;
+		List<VersionResultSet> results = null;
 	   	List<IQueryInterface> qL = new LinkedList<IQueryInterface>();
 			qL.add(pq);
 	    	try {
@@ -794,7 +796,7 @@ public class Query{
 			pq.addQueryClause(field, keyword);
 		}
     	   	
-    	List<ModelResultSet> results = null;
+    	List<VersionResultSet> results = null;
        	List<IQueryInterface> qL = new LinkedList<IQueryInterface>();
     		qL.add(pq);
         	try {
@@ -967,7 +969,7 @@ public class Query{
     	if (!StringUtils.isEmpty(topns) && StringUtils.isNumeric(topns)){
     		topn = Integer.valueOf(topns);
     	}
-    	List<ModelResultSet> results = null;
+    	List<VersionResultSet> results = null;
     	
        	AnnotationQuery cq = new AnnotationQuery();
     	cq.addQueryClause(AnnotationFieldEnumerator.NONE, keyword);     	
@@ -1206,8 +1208,8 @@ public class Query{
     	String rankersWeightsString = parameterMap.get("rankersWeights");
     	int rankersWeights = Integer.parseInt(rankersWeightsString); //possible exception if not provided
     	
-    	List<ModelResultSet> results = null;
-    	List<ModelResultSet> initialAggregateRanker = null;
+    	List<VersionResultSet> results = null;
+    	List<VersionResultSet> initialAggregateRanker = null;
     	
        	CellMLModelQuery cq = new CellMLModelQuery();
     	cq.addQueryClause(CellMLModelFieldEnumerator.NONE, keyword);
@@ -1230,7 +1232,7 @@ public class Query{
     		results = QueryAdapter.executeMultipleQueriesForModels(qL);
     		    		
     		initialAggregateRanker = ResultSetUtil.collateModelResultSetByModelId(results);
-    		List<List<ModelResultSet>> splitResults = RankAggregationUtil.splitModelResultSetByIndex(results);
+    		List<List<VersionResultSet>> splitResults = RankAggregationUtil.splitModelResultSetByIndex(results);
     		results = RankAggregation.aggregate(splitResults, initialAggregateRanker, aggregationType, rankersWeights);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
@@ -1257,6 +1259,109 @@ public class Query{
 	@Consumes(MediaType.TEXT_PLAIN) 
     @Path( "/aggregated_model_query" )
     public String aggregatedModelQuery(@Context GraphDatabaseService graphDbSevice)
+    {
+		ManagerUtil.initManager(graphDbSevice); 
+		//String s = "Retrieve models matching the provided keywords. The query is expanded to all indices. Results from different indices are aggregated according to the chosen aggregation";
+		String[] s = {"keyword","aggregationType:["+RankAggregationType.Types.values()+"]"};
+		Gson gson = new Gson();
+		return gson.toJson(s);
+    }
+	
+	@POST
+    @Produces( MediaType.APPLICATION_JSON )
+    @Consumes( MediaType.APPLICATION_JSON ) 
+    @Path( "/grouped_aggregated_model_query" )
+    public String groupedAggregatedModelQuery( 	@Context GraphDatabaseService graphDbSevice,
+    										String jsonMap)
+    {
+    	ManagerUtil.initManager(graphDbSevice); 	
+    	
+    	Gson gson = new Gson();
+    	
+    	Map<String, String> parameterMap = new HashMap<String, String>();
+    	java.lang.reflect.Type typeOfT = new TypeToken<Map<String, String>>(){}.getType();
+
+    	try {
+    		parameterMap = gson.fromJson(jsonMap, typeOfT);
+		} catch (Exception e) {
+			String[] s = {"Exception",e.getMessage()};			
+            return gson.toJson(s); 
+		}
+    	
+    	if (parameterMap==null){
+    		String[] s = {"Exception","no parameters provided!"};
+    		return gson.toJson(s);
+    	} 		
+
+    	String keyword = parameterMap.get("keyword");
+    	if (StringUtils.isEmpty(keyword)){
+    		String[] s = {"Exception","no keywords provided!"};
+    		return gson.toJson(s);
+    	} 
+    	String topns = parameterMap.get("topn");
+    	Integer topn = Integer.MAX_VALUE;
+    	if (!StringUtils.isEmpty(topns) && StringUtils.isNumeric(topns)){
+    		topn = Integer.valueOf(topns);
+    	}   	
+    	String aggregationTypeString = parameterMap.get("aggregationType");
+    	RankAggregationType.Types aggregationType;
+    	if (StringUtils.isEmpty(aggregationTypeString)){
+    		aggregationType = Types.DEFAULT;  
+    	} else aggregationType = RankAggregationType.stringToRankAggregationType(aggregationTypeString);
+    	String rankersWeightsString = parameterMap.get("rankersWeights");
+    	int rankersWeights = Integer.parseInt(rankersWeightsString);
+    	
+    	List<VersionResultSet> results = null;
+    	List<VersionResultSet> initialAggregateRanker = null;
+		List<ModelResultSet> groupedResults = new LinkedList<ModelResultSet>();
+    	
+       	CellMLModelQuery cq = new CellMLModelQuery();
+    	cq.addQueryClause(CellMLModelFieldEnumerator.NONE, keyword);
+    	SBMLModelQuery sq = new SBMLModelQuery();
+    	sq.addQueryClause(SBMLModelFieldEnumerator.NONE, keyword);
+    	PersonQuery persq = new PersonQuery();
+    	persq.addQueryClause(PersonFieldEnumerator.NONE, keyword);
+    	PublicationQuery pubq = new PublicationQuery();
+    	pubq.addQueryClause(PublicationFieldEnumerator.NONE, keyword);
+    	AnnotationQuery aq = new AnnotationQuery();
+    	aq.addQueryClause(AnnotationFieldEnumerator.NONE, keyword);
+    	
+    	List<IQueryInterface> qL = new LinkedList<IQueryInterface>();
+		qL.add(cq);
+		qL.add(sq);
+		qL.add(persq);
+		qL.add(pubq);
+		qL.add(aq);
+    	try {
+    		results = QueryAdapter.executeMultipleQueriesForModels(qL);
+    		    		
+    		initialAggregateRanker = ResultSetUtil.collateModelResultSetByModelId(results);
+    		List<List<VersionResultSet>> splitResults = RankAggregationUtil.splitModelResultSetByIndex(results);
+    		results = RankAggregation.aggregate(splitResults, initialAggregateRanker, aggregationType, rankersWeights);
+    		groupedResults = GroupVersions.groupVersions(results);
+		} catch (Exception e) {
+			String[] s = {"Exception",e.getMessage()};			
+			
+            return gson.toJson(s); 
+		}
+    	
+    	if ((groupedResults!=null) && !groupedResults.isEmpty()) {
+    		groupedResults = groupedResults.subList(0, Math.min(topn, groupedResults.size()));
+    		return gson.toJson(groupedResults);
+    	}
+    	else {
+    		String[] s = {"#Results","0"};
+    		
+    		 return gson.toJson(s);
+
+    	}
+    }
+    
+	@GET
+    @Produces( MediaType.APPLICATION_JSON ) 
+	@Consumes(MediaType.TEXT_PLAIN) 
+    @Path( "/grouped_aggregated_model_query" )
+    public String groupedAggregatedModelQuery(@Context GraphDatabaseService graphDbSevice)
     {
 		ManagerUtil.initManager(graphDbSevice); 
 		//String s = "Retrieve models matching the provided keywords. The query is expanded to all indices. Results from different indices are aggregated according to the chosen aggregation";
