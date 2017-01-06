@@ -25,6 +25,11 @@ import de.unirostock.sems.masymos.query.types.PersonQuery;
 import de.unirostock.sems.masymos.query.types.PublicationQuery;
 import de.unirostock.sems.masymos.query.types.SBMLModelQuery;
 
+/**
+*
+* Copyright 2016 Ron Henkel (GPL v3)
+* @author ronhenkel
+*/
 //@Path("/diagnose")
 @MetaInfServices( ServerPlugin.class )
 @Description( "An extension to the Neo4j Server to test if model API is alive" )

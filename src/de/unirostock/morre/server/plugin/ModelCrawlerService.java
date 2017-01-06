@@ -26,6 +26,11 @@ import com.google.gson.reflect.TypeToken;
 import de.unirostock.morre.server.util.ManagerUtil;
 import de.unirostock.sems.masymos.database.ModelLookup;
 
+/**
+*
+* Copyright 2016 Ron Henkel (GPL v3)
+* @author ronhenkel
+*/
 @MetaInfServices( ServerPlugin.class )
 @Path("/model_crawler_service")
 @Description( "An extension to the Neo4j Server to test if model API is alive" )

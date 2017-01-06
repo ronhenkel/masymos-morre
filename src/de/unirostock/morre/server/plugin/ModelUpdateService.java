@@ -29,6 +29,11 @@ import de.unirostock.sems.masymos.database.ModelDeleter;
 import de.unirostock.sems.masymos.database.ModelInserter;
 import de.unirostock.sems.masymos.util.ModelDataHolder;
 
+/**
+*
+* Copyright 2016 Ron Henkel (GPL v3)
+* @author ronhenkel
+*/
 @MetaInfServices( ServerPlugin.class )
 @Path("/model_update_service")
 @Description( "An extension to the Neo4j Server to test if model API is alive" )

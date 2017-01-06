@@ -50,6 +50,11 @@ import de.unirostock.sems.masymos.query.types.SedmlQuery;
 import de.unirostock.sems.masymos.util.RankAggregationUtil;
 import de.unirostock.sems.masymos.util.ResultSetUtil;
 
+/**
+*
+* Copyright 2016 Ron Henkel (GPL v3)
+* @author ronhenkel
+*/
 //@MetaInfServices( ServerPlugin.class )
 @Path("/query")
 public class Query{
